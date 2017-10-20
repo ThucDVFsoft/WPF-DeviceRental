@@ -1,0 +1,19 @@
+<Window x:Class="DeviceRentalManagement.View.LoginWndView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Width="416" Height="239" ResizeMode="NoResize">
+
+
+    <Canvas Margin="5,4,5,6">
+        <Label Content="Login" Canvas.Left="176" Width="68" Foreground="Blue" FontWeight="Bold" FontSize="20" Canvas.Top="-5"/>
+        <TextBlock Canvas.Left="18" TextWrapping="Wrap" Text="UserName" Canvas.Top="49" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+        <TextBox x:Name="UserNameTxtbox" Height="30" Canvas.Left="94" TextWrapping="Wrap" Canvas.Top="44" Width="279" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+        <TextBlock Canvas.Left="18" TextWrapping="Wrap" Text="Password" Canvas.Top="98" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+        <TextBox x:Name="PasswordTxtbox" Height="30" Canvas.Left="94" TextWrapping="Wrap" Canvas.Top="93" Width="279" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+        <Button x:Name="CloseBtn" Content="_Close" Canvas.Left="94" Canvas.Top="155" Width="93" Height="29"/>
+        <Button x:Name="LoginBtn" Content="_Login" Canvas.Left="280" Canvas.Top="155" Width="93" Height="29" ForceCursor="True"/>
+        <TextBlock x:Name="Warning" Canvas.Left="94" TextWrapping="Wrap" Canvas.Top="134" Width="279" FontSize="15" Height="14"/>
+    </Canvas>
+</Window>
