@@ -7,7 +7,7 @@ using System;
 
 namespace DeviceRentalManagement.ModelEF.Repository
 {
-    class DeviceRepository : BaseRepository<Device>
+    public class DeviceRepository : BaseRepository<Device>
     {
         public DeviceRepository(DbContext context)
             :base(context)

@@ -116,9 +116,6 @@
     <Compile Include="ModelEF\Repository\EmployeeRepository.cs" />
     <Compile Include="ModelEF\Repository\Interface\IRepository.cs" />
     <Compile Include="ModelEF\Repository\RentalRepository.cs" />
-    <Compile Include="ModelEF\sysdiagram.cs">
-      <DependentUpon>DeviceRental.tt</DependentUpon>
-    </Compile>
     <Compile Include="Model\DeviceModel.cs" />
     <Compile Include="Model\EmployeeModel.cs" />
     <Compile Include="Model\DeviceRentalModel.cs" />
@@ -134,7 +131,6 @@
     <Compile Include="ViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\PopupViewModel\AddDetailRentalViewModel.cs" />
     <Compile Include="ViewModel\PopupViewModel\EditDetailRentalViewModel.cs" />
-    <Compile Include="ViewModel\PopupViewModel\PopupBaseViewModel.cs" />
     <Compile Include="ViewModel\RentalViewModel.cs" />
     <Compile Include="View\DeviceView.xaml.cs">
       <DependentUpon>DeviceView.xaml</DependentUpon>

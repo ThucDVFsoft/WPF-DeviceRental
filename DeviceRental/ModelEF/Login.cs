@@ -14,7 +14,7 @@ namespace DeviceRentalManagement.ModelEF
     
     public partial class Login
     {
-        public int UserId { get; set; }
+        public int SId { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }

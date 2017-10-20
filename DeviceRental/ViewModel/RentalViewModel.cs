@@ -18,22 +18,23 @@ namespace DeviceRentalManagement.ViewModel
 {
     class DeviceRentalViewModel : BaseViewModel
     {
-        private readonly RentalRepository repository;
-        Expression<Func<DeviceRental, bool>> StatusFunc;
-        Expression<Func<DeviceRental, bool>> SearchFunc;
+        private Expression<Func<DeviceRental, bool>> StatusFunc;
+        private Expression<Func<DeviceRental, bool>> SearchFunc;
+        private ObservableCollection<DeviceRental> reserveModels;
 
         public DeviceRentalViewModel() 
         {
-            repository = new RentalRepository(EntitiesManager.GetEntitiesInstance());
+            DeviceRentalModels = GetRentals();
+            reserveModels = DeviceRentalModels;
             CbStatusSelectedItem = Const.RentalStatus[0];
-            GridSelectedIndex = 0;
+            SelectedInd = 0;
             EditCommand = new RelayCommand<string>(EditRentalMethod);
             ReturnCommand = new RelayCommand<string>(ReturnRentalMethod);
             AddNewCommand = new RelayCommand<string>(AddNewRentalMethod);
         }
 
-        private ObservableCollection<DeviceRentalModel> deviceRentalModels;
-        public ObservableCollection<DeviceRentalModel> DeviceRentalModels
+        private ObservableCollection<DeviceRental> deviceRentalModels;
+        public ObservableCollection<DeviceRental> DeviceRentalModels
         {
             get { return deviceRentalModels; }
             set
@@ -55,24 +56,24 @@ namespace DeviceRentalManagement.ViewModel
             }
         }
 
-        private int gridSelectedIndex;
-        public int GridSelectedIndex
+        private int selectedInd;
+        public int SelectedInd
         {
-            get { return gridSelectedIndex; }
+            get { return selectedInd; }
             set
             {
-                gridSelectedIndex = value;
+                selectedInd = value;
                 OnPropertyChanged();
             }
         }
 
-        private DeviceRentalModel gridSelectedItem;
-        public DeviceRentalModel GridSelectedItem
+        private DeviceRental selectedItem;
+        public DeviceRental SelectedItem
         {
-            get { return gridSelectedItem; }
+            get { return selectedItem; }
             set
             {
-                gridSelectedItem = value;
+                selectedItem = value;
                 OnPropertyChanged();
             }
         }
@@ -105,7 +106,7 @@ namespace DeviceRentalManagement.ViewModel
         public RelayCommand<string> AddNewCommand { get; private set; }
         private void EditRentalMethod(string type)
         {
-            var editDetailRentalViewModel = new EditDetailRentalViewModel(GridSelectedItem);
+            var editDetailRentalViewModel = new EditDetailRentalViewModel(SelectedItem);
             var editDetailRentalWindow = new EditDetailRentalView(editDetailRentalViewModel);
             editDetailRentalWindow.DataContext = editDetailRentalViewModel;
             editDetailRentalWindow.ShowDialog();
@@ -114,25 +115,26 @@ namespace DeviceRentalManagement.ViewModel
 
         private void ReturnRentalMethod(string type)
         {
-            var rental = repository.DbSet.Find(GridSelectedItem.SId);
+            var rental = rentalRepository.DbSet.Find(SelectedItem.SId);
             rental.RentalStatus = 2;
             rental.RentalDate = DateTime.Now;
-            repository.Update(rental);
+            rentalRepository.Update(rental);
             RefreshData(StatusFunc, SearchFunc);
         }
 
         private void AddNewRentalMethod(string type)
         {
-            //var addDetailRentalViewModel = new AddDetailRentalViewModel(GridSelectedItem);
-            var addDetailRentalWindow = new AddDetailRentalView();
-            //editDetailRentalWindow.DataContext = editDetailRentalViewModel;
+            var addDetailRentalViewModel = new AddDetailRentalViewModel();
+            var addDetailRentalWindow = new AddDetailRentalView(addDetailRentalViewModel);
+            addDetailRentalWindow.DataContext = addDetailRentalViewModel;
             addDetailRentalWindow.ShowDialog();
+            RefreshData(StatusFunc, SearchFunc);
         }
         private void SearchFilter()
         {
             SearchFunc = s => s.Employee.Name.Contains(SearchText) 
                                                                 || s.Device.Name.Contains(SearchText);
-            RefreshData(StatusFunc, SearchFunc);
+            Filter(StatusFunc, SearchFunc);
         }
 
         private void StatusFilter()
@@ -147,7 +149,7 @@ namespace DeviceRentalManagement.ViewModel
                 StatusFunc = s => s.RentalStatus == rentalStatus;
             }
 
-            RefreshData(StatusFunc, SearchFunc);
+            Filter(StatusFunc, SearchFunc);
         }
 
         private Visibility throbberVisible = Visibility.Visible;
@@ -161,22 +163,56 @@ namespace DeviceRentalManagement.ViewModel
             }
         }
 
+        private void Filter(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
+        {
+            var selected = SelectedItem;
+            
+            if (reserveModels == null) return;
+            if (SearchFunc == null && StatusFunc == null)
+            {
+                DeviceRentalModels = reserveModels;
+            }
+            else if (StatusFunc == null)
+            {
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(reserveModels.Where(SearchFunc.Compile()));
+            }
+            else if (SearchFunc == null)
+            {
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(reserveModels.Where(StatusFunc.Compile()));
+            }
+            else
+            {
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(reserveModels.Where(StatusFunc.Compile())
+                        .Where(SearchFunc.Compile()));
+            }
+            UpdateSelectedItem(selected);
+        }
+
         private async Task RefreshData(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
         {
             //ThrobberVisible = Visibility.Visible;
-
-            var temp = GridSelectedItem;
+            var selected = SelectedItem;
 
             //await Task.Delay(3000);
-            var deviceRentals = await repository.GetListAsync(StatusFunc, SearchFunc);
-            var deviceRentalModels = deviceRentals.Select(s => new DeviceRentalModel(s)).ToList();
-            DeviceRentalModels = new ObservableCollection<DeviceRentalModel>(deviceRentalModels);
+            var deviceRentals = await rentalRepository.GetListAsync(StatusFunc, SearchFunc);
+            DeviceRentalModels = new ObservableCollection<DeviceRental>(deviceRentals);
+            reserveModels = DeviceRentalModels;
 
-            var temp2 = DeviceRentalModels.Where(s => s.SId == temp.SId).ToList();
-            if (temp2.Any()) GridSelectedItem = temp2[0];
-            else GridSelectedItem = temp;
-
+            UpdateSelectedItem(selected);
             //ThrobberVisible = Visibility.Collapsed;
+        }
+
+        private void UpdateSelectedItem(DeviceRental selected)
+        {
+            try
+            {
+                SelectedItem = DeviceRentalModels.First(s => s.SId == selected.SId);
+            }
+            catch
+            {
+                if (DeviceRentalModels.Any())
+                    SelectedItem = DeviceRentalModels[0];
+            }
         }
     }
 }

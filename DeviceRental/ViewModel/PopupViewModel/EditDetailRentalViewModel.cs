@@ -1,23 +1,21 @@
 using DeviceRentalManagement.Model;
 using DeviceRentalManagement.ModelEF;
-using DeviceRentalManagement.ModelEF.Repository;
 using DeviceRentalManagement.Support;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DeviceRentalManagement.ViewModel.PopupViewModel
 {
    public class EditDetailRentalViewModel : BaseViewModel
     {
-        private DeviceRentalModel selectedRental;
-        private List<Device> devices;
-        private List<Employee> employees;
-        private readonly RentalRepository rentalRepository = new RentalRepository(EntitiesManager.GetEntitiesInstance());
-        private readonly DeviceRepository deviceRepository = new DeviceRepository(EntitiesManager.GetEntitiesInstance());
-        private readonly EmployeeRepository employeeRepository = new EmployeeRepository(EntitiesManager.GetEntitiesInstance());
-        public EditDetailRentalViewModel(DeviceRentalModel rental)
+        private DeviceRental selectedRental;
+        private ObservableCollection<Device> devices;
+        private ObservableCollection<Employee> employees;
+
+        public EditDetailRentalViewModel(DeviceRental rental)
             :base()
         {
             selectedRental = rental;
@@ -27,34 +25,14 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
 
         private void Initialize()
         {
-            devices = deviceRepository.GetList().ToList();
-            employees = employeeRepository.GetList().ToList();
-
             DeviceNames = GetDeviceNames();
             EmployeeNames = GetEmployeeNames();
-            SelectedDeviceIndex = devices.FindIndex(s => s.DeviceId == selectedRental.DeviceId);
-            SelectedEmployeeIndex = employees.FindIndex(s => s.EmployeeId == selectedRental.EmployeeId);
 
+            SelectedDeviceIndex = new List<Device>(devices).FindIndex(s => s.DeviceId == selectedRental.DeviceId);
+            SelectedEmployeeIndex = new List<Employee>(employees).FindIndex(s => s.EmployeeId == selectedRental.EmployeeId);
             SelectedNote = StringCopy(selectedRental.Note);
             SelectedRentalDate = NewDateTime(selectedRental.RentalDate);
             SelectedExpiryDate = NewDateTime(selectedRental.ExpiryDate);
-        }
-
-        private string StringCopy(string source)
-        {
-            if (source == null) return null;
-
-            return string.Copy(source);
-        }
-
-        private DateTime? NewDateTime(DateTime? date)
-        {
-            if (date == null) return null;
-
-            int year = date.Value.Year;
-            int month = date.Value.Month;
-            int day = date.Value.Day;
-            return new DateTime(year, month, day);
         }
 
         private int selectedEmployeeIndex;
@@ -192,12 +170,14 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
 
         private ObservableCollection<string> GetDeviceNames()
         {
+            devices = GetDevices();
             var deviceNameList = devices.Select(s => s.Name).ToList();
             return new ObservableCollection<string>(deviceNameList);
         }
 
         private ObservableCollection<string> GetEmployeeNames()
         {
+            employees = GetEmployees();
             var employeeNameList = employees.Select(s => s.Name).ToList();
             return new ObservableCollection<string>(employeeNameList);
         }

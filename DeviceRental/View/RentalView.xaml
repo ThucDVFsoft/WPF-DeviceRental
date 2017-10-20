@@ -65,14 +65,14 @@
                       CanUserAddRows="False"
                       CanUserDeleteRows="False"
                       AutoGenerateColumns="False" 
-                      LoadingRow="DataGrid_LoadingRow"
                       IsSynchronizedWithCurrentItem="True"
-                      SelectedItem="{Binding Path=GridSelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      SelectedIndex="{Binding Path=GridSelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                      SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      SelectedIndex="{Binding Path=SelectedInd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="No" Width="0.05*" Binding="{Binding AlternationIndex, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
-                    <DataGridTextColumn Header="Device Name" Width="0.15*" Binding="{Binding Path=DeviceName}"/>
-                    <DataGridTextColumn Header="Employee" Width="0.15*" Binding="{Binding Path=EmployeeName}"/>
+                    <DataGridTextColumn Header="Device Name" Width="0.15*" Binding="{Binding Path=Device.Name}"/>
+                    <DataGridTextColumn Header="Employee" Width="0.15*" Binding="{Binding Path=Employee.Name}"/>
                     <DataGridTextColumn Header="Rental Date" Width="0.12*" Binding="{Binding Path=RentalDate}"/>
                     <DataGridTextColumn Header="Expiry Date" Width="0.12*" Binding="{Binding Path=ExpiryDate}"/>
                     <DataGridTextColumn Header="Status" Width="0.1*" Binding="{Binding Path=RentalStatus}"/>

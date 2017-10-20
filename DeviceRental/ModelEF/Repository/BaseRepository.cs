@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DeviceRentalManagement.ModelEF.Repository
 {
-    class BaseRepository<T> : IRepository<T> where T : class
+    public class BaseRepository<T> : IRepository<T> where T : class
     {
         public readonly DbContext Context;
         public IDbSet<T> DbSet { get; set; }
@@ -23,6 +23,13 @@ namespace DeviceRentalManagement.ModelEF.Repository
         {
             DbSet.Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
+            Context.SaveChanges();
+        }
+
+        public virtual void Add(T entity)
+        {
+            DbSet.Add(entity);
+            //Context.Entry(entity).State = EntityState.Added;
             Context.SaveChanges();
         }
 
@@ -43,13 +50,30 @@ namespace DeviceRentalManagement.ModelEF.Repository
             return await DbSet.ToListAsync();
         }
 
-        public virtual List<T> GetList(Expression<Func<T, bool>> filter = null)
+        public virtual IEnumerable<T> GetList(Expression<Func<T, bool>> FilterFunc1 = null, Expression<Func<T, bool>> FilterFunc2 = null)
         {
-            if (filter != null)
+            if (FilterFunc1 != null && FilterFunc2 != null)
             {
-                return DbSet.Where(filter).ToList();
+                return DbSet.Where(FilterFunc1).Where(FilterFunc2);
             }
-            return DbSet.ToList();
+            else if (FilterFunc1 == null && FilterFunc2 != null)
+            {
+                return DbSet.Where(FilterFunc2);
+            }
+            else if (FilterFunc1 != null && FilterFunc2 == null)
+            {
+                return DbSet.Where(FilterFunc1);
+            }
+            return DbSet;
         }
+
+        //public virtual IEnumerable<T> GetList(Expression<Func<T, bool>> filter = null)
+        //{
+        //    if (filter != null)
+        //    {
+        //        return DbSet.Where(filter);
+        //    }
+        //    return DbSet;
+        //}
     }
 }
