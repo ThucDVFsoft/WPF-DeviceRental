@@ -1,23 +1,20 @@
-﻿using DeviceRentalManagement.ModelEF;
-using DeviceRentalManagement.Support;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DeviceRentalManagement.ModelEF;
+using DeviceRentalManagement.Support;
+using System.Runtime.CompilerServices;
 
 namespace DeviceRentalManagement.ViewModel.PopupViewModel
 {
     public class AddDetailRentalViewModel : BaseViewModel
     {
-
+        public DeviceRental newRental { get; private set; }
         public AddDetailRentalViewModel()
             :base()
         {
-            Devices = new ObservableCollection<Device>(GetDevices());
-            Employees = new ObservableCollection<Employee>(GetEmployees());
-            SaveCommand = new RelayCommand<string>(SaveCommandMethod);
+            Devices = GetDevices();
+            Employees = GetEmployees();
+            SaveCommand = new RelayCommand<string>(SaveCommandMethod, CanSaveMethod);
         }
 
         private ObservableCollection<Device> devices;
@@ -27,7 +24,7 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 devices = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
@@ -38,7 +35,7 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 selectedDevice = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
@@ -49,7 +46,7 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 employees = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
@@ -60,7 +57,7 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 selectedEmployee = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
@@ -71,7 +68,7 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 selectedRentalDate = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
@@ -82,7 +79,7 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 selectedExpiryDate = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
@@ -93,16 +90,35 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
             set
             {
                 newNote = value;
-                OnPropertyChanged();
+                this.OnPropertyChanged();
             }
         }
 
         public RelayCommand<string> SaveCommand { get; private set; }
         private void SaveCommandMethod(string param)
         {
-            var newRental = NewRental();
+            newRental = NewRental();
             rentalRepository.Add(newRental);
             OnClosingRequest();
+        }
+        private bool CanSaveMethod(string param = null)
+        {
+            if (SelectedDevice != null
+                && SelectedEmployee != null
+                && SelectedRentalDate != null
+                && SelectedExpiryDate != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private new void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            base.OnPropertyChanged(propertyName);
+            if (SaveCommand == null) return;
+     
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         private DeviceRental NewRental()

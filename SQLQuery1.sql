@@ -54,3 +54,20 @@ update DeviceRental set RentalStatus = 2 where Sid = 6
 update DeviceRental set RentalStatus = 2 where Sid = 8
 update DeviceRental set RentalStatus = 2 where Sid = 9
 select * from DeviceRental
+
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\computer.png', Single_Blob) MyImage) where DeviceId = 1
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\computer.png', Single_Blob) MyImage) where DeviceId = 2
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\computer.png', Single_Blob) MyImage) where DeviceId = 3
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\computer.png', Single_Blob) MyImage) where DeviceId = 4
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\computer.png', Single_Blob) MyImage) where DeviceId = 5
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\computer.png', Single_Blob) MyImage) where DeviceId = 6
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\Printer.jpg', Single_Blob) MyImage) where DeviceId = 7
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\Printer.jpg', Single_Blob) MyImage) where DeviceId = 8
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\Printer.jpg', Single_Blob) MyImage) where DeviceId = 9
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\Printer.jpg', Single_Blob) MyImage) where DeviceId = 10
+
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\TV.jpg', Single_Blob) MyImage) where DeviceId = 11
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\TV.jpg', Single_Blob) MyImage) where DeviceId = 12
+UPDATE Device SET [Image] = (SELECT MyImage.* from Openrowset(Bulk 'D:\Project\XLL\C#\WPF\Baitap\WPF-DeviceRental\DeviceRental\Images\Devices\TV.jpg', Single_Blob) MyImage) where DeviceId = 13
+
+

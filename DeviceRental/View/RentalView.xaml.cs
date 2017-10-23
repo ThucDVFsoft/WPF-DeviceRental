@@ -1,7 +1,5 @@
 using DeviceRentalManagement.Support;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace DeviceRentalManagement.View
 {
@@ -14,10 +12,6 @@ namespace DeviceRentalManagement.View
         {
             InitializeComponent();
             cbStatus.ItemsSource = Const.RentalStatus;
-        }
-        void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            e.Row.Header = (e.Row.GetIndex() + 1).ToString();
         }
     }
 }

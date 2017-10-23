@@ -1,18 +1,12 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Linq.Expressions;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using DeviceRentalManagement.Model;
 using DeviceRentalManagement.ModelEF;
 using DeviceRentalManagement.Support;
-using DeviceRentalManagement.ModelEF.Repository;
 using DeviceRentalManagement.View.PopupView;
 using DeviceRentalManagement.ViewModel.PopupViewModel;
-using System.Data.Entity;
-using System.Windows;
-using System.Threading;
 
 namespace DeviceRentalManagement.ViewModel
 {
@@ -20,12 +14,13 @@ namespace DeviceRentalManagement.ViewModel
     {
         private Expression<Func<DeviceRental, bool>> StatusFunc;
         private Expression<Func<DeviceRental, bool>> SearchFunc;
-        private ObservableCollection<DeviceRental> reserveModels;
+        private ObservableCollection<DeviceRental> preserveModels;
+        private DeviceRental preserveItem;
 
         public DeviceRentalViewModel() 
         {
             DeviceRentalModels = GetRentals();
-            reserveModels = DeviceRentalModels;
+            preserveModels = DeviceRentalModels;
             CbStatusSelectedItem = Const.RentalStatus[0];
             SelectedInd = 0;
             EditCommand = new RelayCommand<string>(EditRentalMethod);
@@ -129,11 +124,15 @@ namespace DeviceRentalManagement.ViewModel
             addDetailRentalWindow.DataContext = addDetailRentalViewModel;
             addDetailRentalWindow.ShowDialog();
             RefreshData(StatusFunc, SearchFunc);
+            if (addDetailRentalViewModel.newRental != null)
+            {
+                SelectedItem = addDetailRentalViewModel.newRental;
+            }
         }
         private void SearchFilter()
         {
-            SearchFunc = s => s.Employee.Name.Contains(SearchText) 
-                                                                || s.Device.Name.Contains(SearchText);
+            SearchFunc = s => s.Employee.Name.ToLower().Contains(SearchText.ToLower())
+                                                                || s.Device.Name.ToLower().Contains(SearchText.ToLower());
             Filter(StatusFunc, SearchFunc);
         }
 
@@ -165,53 +164,53 @@ namespace DeviceRentalManagement.ViewModel
 
         private void Filter(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
         {
-            var selected = SelectedItem;
-            
-            if (reserveModels == null) return;
+            if (preserveModels == null) return;
+
             if (SearchFunc == null && StatusFunc == null)
             {
-                DeviceRentalModels = reserveModels;
+                DeviceRentalModels = preserveModels;
             }
             else if (StatusFunc == null)
             {
-                DeviceRentalModels = new ObservableCollection<DeviceRental>(reserveModels.Where(SearchFunc.Compile()));
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(preserveModels.Where(SearchFunc.Compile()));
             }
             else if (SearchFunc == null)
             {
-                DeviceRentalModels = new ObservableCollection<DeviceRental>(reserveModels.Where(StatusFunc.Compile()));
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(preserveModels.Where(StatusFunc.Compile()));
             }
             else
             {
-                DeviceRentalModels = new ObservableCollection<DeviceRental>(reserveModels.Where(StatusFunc.Compile())
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(preserveModels.Where(StatusFunc.Compile())
                         .Where(SearchFunc.Compile()));
             }
-            UpdateSelectedItem(selected);
+            UpdateSelectedItem();
         }
 
-        private async Task RefreshData(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
+        private void RefreshData(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
         {
             //ThrobberVisible = Visibility.Visible;
-            var selected = SelectedItem;
-
             //await Task.Delay(3000);
-            var deviceRentals = await rentalRepository.GetListAsync(StatusFunc, SearchFunc);
+            preserveItem = SelectedItem;
+            var deviceRentals = rentalRepository.GetList(StatusFunc, SearchFunc);
             DeviceRentalModels = new ObservableCollection<DeviceRental>(deviceRentals);
-            reserveModels = DeviceRentalModels;
-
-            UpdateSelectedItem(selected);
+            preserveModels = DeviceRentalModels;
+            SelectedItem = preserveItem;
             //ThrobberVisible = Visibility.Collapsed;
         }
 
-        private void UpdateSelectedItem(DeviceRental selected)
+        private void UpdateSelectedItem()
         {
             try
             {
-                SelectedItem = DeviceRentalModels.First(s => s.SId == selected.SId);
+                SelectedItem = DeviceRentalModels.First(s => s.SId == preserveItem.SId);
             }
             catch
             {
                 if (DeviceRentalModels.Any())
+                {
+                    preserveItem = SelectedItem;
                     SelectedItem = DeviceRentalModels[0];
+                }
             }
         }
     }

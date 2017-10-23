@@ -1,144 +1,109 @@
-using DeviceRentalManagement.Model;
+using System;
+using System.Collections.ObjectModel;
 using DeviceRentalManagement.ModelEF;
 using DeviceRentalManagement.Support;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DeviceRentalManagement.ViewModel.PopupViewModel
 {
    public class EditDetailRentalViewModel : BaseViewModel
     {
         private DeviceRental selectedRental;
-        private ObservableCollection<Device> devices;
-        private ObservableCollection<Employee> employees;
 
         public EditDetailRentalViewModel(DeviceRental rental)
             :base()
         {
             selectedRental = rental;
-            SaveCommand = new RelayCommand<DeviceRental>(SaveCmdMethod);
-            Initialize();
+
+            Devices = GetDevices();
+            Employees = GetEmployees();
+            SelectedEmployee = selectedRental.Employee;
+            SelectedDevice = selectedRental.Device;
+            Note = StringCopy(selectedRental.Note);
+            RentalDate = NewDateTime(selectedRental.RentalDate);
+            ExpiryDate = NewDateTime(selectedRental.ExpiryDate);
+            SaveCommand = new RelayCommand<DeviceRental>(SaveCommandMethod);
         }
 
-        private void Initialize()
+        private Employee selectedEmployee;
+        public Employee SelectedEmployee
         {
-            DeviceNames = GetDeviceNames();
-            EmployeeNames = GetEmployeeNames();
-
-            SelectedDeviceIndex = new List<Device>(devices).FindIndex(s => s.DeviceId == selectedRental.DeviceId);
-            SelectedEmployeeIndex = new List<Employee>(employees).FindIndex(s => s.EmployeeId == selectedRental.EmployeeId);
-            SelectedNote = StringCopy(selectedRental.Note);
-            SelectedRentalDate = NewDateTime(selectedRental.RentalDate);
-            SelectedExpiryDate = NewDateTime(selectedRental.ExpiryDate);
-        }
-
-        private int selectedEmployeeIndex;
-        public int SelectedEmployeeIndex
-        {
-            get { return selectedEmployeeIndex; }
+            get { return selectedEmployee; }
             set
             {
-                selectedEmployeeIndex = value;
+                selectedEmployee = value;
                 OnPropertyChanged();
             }
         }
 
-        private int selectedDeviceIndex;
-        public int SelectedDeviceIndex
+        private Device selectedDevice;
+        public Device SelectedDevice
         {
-            get { return selectedDeviceIndex; }
+            get { return selectedDevice; }
             set
             {
-                selectedDeviceIndex = value;
-                SelectedDeviceCode = devices[selectedDeviceIndex].Code;
-                SelectedDeviceType = devices[selectedDeviceIndex].Type;
+                selectedDevice = value;
                 OnPropertyChanged();
             }
         }
 
-        private string selectedDeviceCode;
-        public string SelectedDeviceCode
+        private string note;
+        public string Note
         {
-            get { return selectedDeviceCode; }
+            get { return note; }
             set
             {
-                selectedDeviceCode = value;
+                note = value;
                 OnPropertyChanged();
             }
         }
 
-        private int selectedDeviceType;
-        public int SelectedDeviceType
+        private DateTime? rentalDate;
+        public DateTime? RentalDate
         {
-            get { return selectedDeviceType; }
+            get { return rentalDate; }
             set
             {
-                selectedDeviceType = value;
+                rentalDate = value;
                 OnPropertyChanged();
             }
         }
 
-        private string selectedNote;
-        public string SelectedNote
+        private DateTime? expiryDate;
+        public DateTime? ExpiryDate
         {
-            get { return selectedNote; }
+            get { return expiryDate; }
             set
             {
-                selectedNote = value;
+                expiryDate = value;
                 OnPropertyChanged();
             }
         }
 
-        private DateTime? selectedRentalDate;
-        public DateTime? SelectedRentalDate
+        private ObservableCollection<Device> devices;
+        public ObservableCollection<Device> Devices
         {
-            get { return selectedRentalDate; }
+            get { return devices; }
             set
             {
-                selectedRentalDate = value;
+                devices = value;
                 OnPropertyChanged();
             }
         }
 
-        private DateTime? selectedExpiryDate;
-        public DateTime? SelectedExpiryDate
+        private ObservableCollection<Employee> employees;
+        public ObservableCollection<Employee> Employees
         {
-            get { return selectedExpiryDate; }
+            get { return employees; }
             set
             {
-                selectedExpiryDate = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<string> deviceNames;
-        public ObservableCollection<string> DeviceNames
-        {
-            get { return deviceNames; }
-            set
-            {
-                deviceNames = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ObservableCollection<string> employeeNames;
-        public ObservableCollection<string> EmployeeNames
-        {
-            get { return employeeNames; }
-            set
-            {
-                employeeNames = value;
+                employees = value;
                 OnPropertyChanged();
             }
         }
 
         public RelayCommand<DeviceRental> SaveCommand { get; private set; }
 
-        private void SaveCmdMethod(DeviceRental editedRental)
+        private void SaveCommandMethod(DeviceRental editedRental)
         {
             var rental = UpdatedRental();
             rentalRepository.Update(rental);
@@ -158,28 +123,12 @@ namespace DeviceRentalManagement.ViewModel.PopupViewModel
         private DeviceRental UpdatedRental()
         {
             var temp = rentalRepository.DbSet.Find(selectedRental.SId);
-            temp.Device = devices[SelectedDeviceIndex];
-            temp.Employee = employees[SelectedEmployeeIndex];
-            temp.DeviceId = devices[SelectedDeviceIndex].DeviceId;
-            temp.EmployeeId = employees[SelectedEmployeeIndex].EmployeeId;
-            temp.RentalDate = SelectedRentalDate;
-            temp.ExpiryDate = SelectedExpiryDate;
-            temp.Note = SelectedNote;
+            temp.Device = selectedDevice;
+            temp.Employee = selectedEmployee;
+            temp.RentalDate = RentalDate;
+            temp.ExpiryDate = ExpiryDate;
+            temp.Note = Note;
             return temp;
-        }
-
-        private ObservableCollection<string> GetDeviceNames()
-        {
-            devices = GetDevices();
-            var deviceNameList = devices.Select(s => s.Name).ToList();
-            return new ObservableCollection<string>(deviceNameList);
-        }
-
-        private ObservableCollection<string> GetEmployeeNames()
-        {
-            employees = GetEmployees();
-            var employeeNameList = employees.Select(s => s.Name).ToList();
-            return new ObservableCollection<string>(employeeNameList);
         }
     }
 }

@@ -120,6 +120,7 @@
     <Compile Include="Model\EmployeeModel.cs" />
     <Compile Include="Model\DeviceRentalModel.cs" />
     <Compile Include="Support\Const.cs" />
+    <Compile Include="Support\CustomConverter.cs" />
     <Compile Include="Support\Throbber.xaml.cs">
       <DependentUpon>Throbber.xaml</DependentUpon>
     </Compile>
@@ -147,7 +148,6 @@
     <Compile Include="View\PopupView\EditDetailRentalView.xaml.cs">
       <DependentUpon>EditDetailRentalView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\PopupView\WindowPopupView.cs" />
     <Compile Include="View\RentalView.xaml.cs">
       <DependentUpon>RentalView.xaml</DependentUpon>
     </Compile>
@@ -241,7 +241,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\Devices\computer.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\search.png" />
   </ItemGroup>
@@ -269,6 +271,12 @@
     <Resource Include="Images\avatar.png" />
     <Resource Include="Images\help.png" />
     <Resource Include="Images\image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Devices\Printer.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Devices\TV.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

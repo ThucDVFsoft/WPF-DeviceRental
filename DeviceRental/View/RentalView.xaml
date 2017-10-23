@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              xmlns:support="clr-namespace:DeviceRentalManagement.Support"
-             d:DesignHeight="500" d:DesignWidth="800">
+             d:DesignHeight="500" d:DesignWidth="800" >
     
     <UserControl.Resources>
         <Style TargetType="Button" x:Key="BtnStyle1">
@@ -18,6 +18,18 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <support:StatusInt2StringConverter x:Key="StatusConverter" />
+        <support:DataGridIndexConverter x:Key="IndexConverter" />
+
+        <Style x:Key="{x:Type DataGridCell}" TargetType="{x:Type DataGridCell}">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </UserControl.Resources>
     
     <Grid>
@@ -70,12 +82,12 @@
                       SelectedIndex="{Binding Path=SelectedInd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                       >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="No" Width="0.05*" Binding="{Binding AlternationIndex, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
-                    <DataGridTextColumn Header="Device Name" Width="0.15*" Binding="{Binding Path=Device.Name}"/>
+                    <DataGridTextColumn Header="No" Width="0.05*" Binding="{Binding AlternationIndex, RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource ResourceKey=IndexConverter}}"/>
                     <DataGridTextColumn Header="Employee" Width="0.15*" Binding="{Binding Path=Employee.Name}"/>
+                    <DataGridTextColumn Header="Device Name" Width="0.15*" Binding="{Binding Path=Device.Name}"/>
                     <DataGridTextColumn Header="Rental Date" Width="0.12*" Binding="{Binding Path=RentalDate}"/>
                     <DataGridTextColumn Header="Expiry Date" Width="0.12*" Binding="{Binding Path=ExpiryDate}"/>
-                    <DataGridTextColumn Header="Status" Width="0.1*" Binding="{Binding Path=RentalStatus}"/>
+                    <DataGridTextColumn Header="Status" Width="0.1*" Binding="{Binding Path=RentalStatus, Converter={StaticResource ResourceKey=StatusConverter}}"/>
                     <DataGridTextColumn Header="Note" Width="0.2*" Binding="{Binding Path=Note}"/>
                     <DataGridTemplateColumn Header="" Width="0.31*">
                         <DataGridTemplateColumn.CellTemplate>

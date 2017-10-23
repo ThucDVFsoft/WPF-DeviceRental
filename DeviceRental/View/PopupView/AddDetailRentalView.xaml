@@ -100,7 +100,7 @@
         <DatePicker Grid.Row="1" Grid.Column="2"
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Left"
-                    SelectedDate="{Binding Path=SelectedRentalDate}"
+                    SelectedDate="{Binding Path=SelectedRentalDate, UpdateSourceTrigger=PropertyChanged}"
                     Width="150" Height="34" 
                     VerticalContentAlignment="Center">
         </DatePicker>
@@ -109,7 +109,7 @@
                    VerticalAlignment="Center">
         </TextBlock>
         <DatePicker Grid.Row="1" Grid.Column="5"
-                    SelectedDate="{Binding Path=SelectedExpiryDate}"
+                    SelectedDate="{Binding Path=SelectedExpiryDate, UpdateSourceTrigger=PropertyChanged}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center" 
                     Height="34" Width="150" VerticalContentAlignment="Center">

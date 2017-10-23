@@ -34,8 +34,14 @@
                   HorizontalAlignment="Left"
                   VerticalAlignment="Center"
                   Margin="9,0,0,0"
-                  SelectedIndex="{Binding Path=SelectedDeviceIndex}"
-                  ItemsSource="{Binding Path=DeviceNames}"/>
+                  SelectedItem="{Binding Path=SelectedDevice}"
+                  ItemsSource="{Binding Path=Devices}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Name}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
         <TextBlock Grid.Row="2" Grid.Column="1"
                    Text="Employee" 
                    FontSize="15" 
@@ -46,9 +52,14 @@
                 Width="431"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                SelectedIndex="{Binding Path=SelectedEmployeeIndex}"
-                ItemsSource="{Binding Path=EmployeeNames}"
+                SelectedItem="{Binding Path=SelectedEmployee}"
+                ItemsSource="{Binding Path=Employees}"
                 Margin="0,6,41,5">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=Name}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
         </ComboBox>
         <Image Name="Image" 
                Grid.Column="0" Grid.Row="3" Grid.RowSpan="2" 
@@ -57,9 +68,9 @@
                Margin="-4,11,29,25">
             <Image.Style>
                 <Style TargetType="{x:Type Image}">
-                    <Setter Property="Source" Value="{Binding Path=SelectedDeviceImage}" />
+                    <Setter Property="Source" Value="{Binding Path=SelectedDevice.Image}" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Path=SelectedDeviceImage}" Value="{x:Null}">
+                        <DataTrigger Binding="{Binding Path=SelectedDevice.Image}" Value="{x:Null}">
                             <Setter Property="Source" Value="/Images/image.png" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -81,7 +92,7 @@
                   VerticalAlignment="Top" 
                   Grid.ColumnSpan="2" 
                   Height="30" Width="165"
-                  SelectedDate="{Binding Path=SelectedRentalDate, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                  SelectedDate="{Binding Path=RentalDate, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
         </DatePicker>
         <TextBlock 
             Grid.Column="3" 
@@ -100,7 +111,7 @@
             VerticalAlignment="Top" 
             Grid.ColumnSpan="2" 
             Height="30" Width="165"
-            SelectedDate="{Binding Path=SelectedExpiryDate, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+            SelectedDate="{Binding Path=ExpiryDate, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
         </DatePicker>
         <TextBlock 
             HorizontalAlignment="Left" 
@@ -115,7 +126,7 @@
                    Margin="119,0,0,0" 
                    Grid.Row="5" 
                    TextWrapping="Wrap" 
-                   Text="{Binding Path=SelectedDeviceCode}" 
+                   Text="{Binding Path=SelectedDevice.Code}" 
                    VerticalAlignment="Top"
                    FontSize="15"/>
         <TextBlock 
@@ -131,7 +142,7 @@
                    Margin="119,33,0,0" 
                    Grid.Row="5" 
                    TextWrapping="Wrap" 
-                   Text="{Binding Path=SelectedDeviceType}" 
+                   Text="{Binding Path=SelectedDevice.Type}" 
                    VerticalAlignment="Top"
                    FontSize="15"/>
         <TextBox Grid.ColumnSpan="4" 
@@ -141,7 +152,7 @@
                  Margin="79,11,0,0" 
                  Grid.Row="4" 
                  TextWrapping="Wrap" 
-                 Text="{Binding Path=SelectedNote, UpdateSourceTrigger=PropertyChanged}" 
+                 Text="{Binding Path=Note, UpdateSourceTrigger=PropertyChanged}" 
                  VerticalAlignment="Top" 
                  Width="435" 
                  BorderBrush="Gray"

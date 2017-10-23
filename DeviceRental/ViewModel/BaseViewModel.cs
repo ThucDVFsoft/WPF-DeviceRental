@@ -1,13 +1,12 @@
-using DeviceRentalManagement.Model;
-using DeviceRentalManagement.ModelEF;
-using DeviceRentalManagement.ModelEF.Repository;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using DeviceRentalManagement.Model;
+using DeviceRentalManagement.ModelEF;
+using DeviceRentalManagement.ModelEF.Repository;
 
 namespace DeviceRentalManagement.ViewModel
 {

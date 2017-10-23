@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using DeviceRentalManagement.Support;
-using System.Linq;
 
 namespace DeviceRentalManagement.ViewModel
 {
@@ -9,24 +8,26 @@ namespace DeviceRentalManagement.ViewModel
         private BaseViewModel currentViewModel;
         private string selectedItem;
         private Dictionary<string, bool> menuSelectedState;
+
+        private static readonly string[] ViewNames = new string[] { "Rental", "Devices", "Employees" };
         private static readonly Dictionary<string, BaseViewModel> viewModelStorage
             = new Dictionary<string, BaseViewModel>()
             {
-                { "Rental", new DeviceRentalViewModel() },
-                { "Devices", new DeviceViewModel() },
-                { "Employees", new EmployeeViewModel() },
+                { ViewNames[0], new DeviceRentalViewModel() },
+                { ViewNames[1], new DeviceViewModel() },
+                { ViewNames[2], new EmployeeViewModel() },
             };
 
         public MainWindowViewModel()
         {
-            CurrentViewModel = GetViewModel("Rental");
+            CurrentViewModel = GetViewModel(ViewNames[0]);
             MenuSelectedState = new Dictionary<string, bool>()
             {
-                { "Rental", true },
-                { "Devices", false },
-                { "Employees", false },
+                { ViewNames[0], true },
+                { ViewNames[1], false },
+                { ViewNames[2], false },
             };
-            selectedItem = "Rental";
+            selectedItem = ViewNames[0];
             NavigateCommand = new RelayCommand<string>(Navigate);
         }
 
