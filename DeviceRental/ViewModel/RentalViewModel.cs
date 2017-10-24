@@ -46,6 +46,7 @@ namespace DeviceRentalManagement.ViewModel
             set
             {
                 cbStatusSelectedItem = value;
+                StatusFilter();
                 OnPropertyChanged();
             }
         }
@@ -79,6 +80,7 @@ namespace DeviceRentalManagement.ViewModel
             set
             {
                 searchText = value;
+                SearchFilter();
                 OnPropertyChanged();
             }
         }
@@ -102,10 +104,8 @@ namespace DeviceRentalManagement.ViewModel
             var editDetailRentalViewModel = new EditDetailRentalViewModel(SelectedItem);
             var editDetailRentalWindow = new EditDetailRentalView(editDetailRentalViewModel);
             editDetailRentalWindow.DataContext = editDetailRentalViewModel;
-            if (editDetailRentalWindow.ShowDialog() == true)
-            {
-                RefreshData(StatusFunc, SearchFunc);
-            }
+            editDetailRentalWindow.ShowDialog();
+            RefreshData(StatusFunc, SearchFunc);
         }
 
         private void ReturnRentalMethod(string type)
@@ -122,14 +122,33 @@ namespace DeviceRentalManagement.ViewModel
             var addDetailRentalViewModel = new AddDetailRentalViewModel();
             var addDetailRentalWindow = new AddDetailRentalView(addDetailRentalViewModel);
             addDetailRentalWindow.DataContext = addDetailRentalViewModel;
-            if (addDetailRentalWindow.ShowDialog() == true)
+            addDetailRentalWindow.ShowDialog();
+            RefreshData(StatusFunc, SearchFunc);
+            if (addDetailRentalViewModel.newRental != null)
             {
-                RefreshData(StatusFunc, SearchFunc);
-                if (addDetailRentalViewModel.newRental != null)
-                {
-                    SelectedItem = addDetailRentalViewModel.newRental;
-                }
+                SelectedItem = addDetailRentalViewModel.newRental;
             }
+        }
+        private void SearchFilter()
+        {
+            SearchFunc = s => s.Employee.Name.ToLower().Contains(SearchText.ToLower())
+                                                                || s.Device.Name.ToLower().Contains(SearchText.ToLower());
+            Filter(StatusFunc, SearchFunc);
+        }
+
+        private void StatusFilter()
+        {
+            int rentalStatus = 0;
+            if (CbStatusSelectedItem == "Not Return") rentalStatus = 1;
+            else if (CbStatusSelectedItem == "Returned") rentalStatus = 2;
+
+            StatusFunc = null;
+            if (rentalStatus == 1 || rentalStatus == 2)
+            {
+                StatusFunc = s => s.RentalStatus == rentalStatus;
+            }
+
+            Filter(StatusFunc, SearchFunc);
         }
 
         private Visibility throbberVisible = Visibility.Visible;
@@ -143,6 +162,30 @@ namespace DeviceRentalManagement.ViewModel
             }
         }
 
+        private void Filter(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
+        {
+            if (preserveModels == null) return;
+
+            if (SearchFunc == null && StatusFunc == null)
+            {
+                DeviceRentalModels = preserveModels;
+            }
+            else if (StatusFunc == null)
+            {
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(preserveModels.Where(SearchFunc.Compile()));
+            }
+            else if (SearchFunc == null)
+            {
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(preserveModels.Where(StatusFunc.Compile()));
+            }
+            else
+            {
+                DeviceRentalModels = new ObservableCollection<DeviceRental>(preserveModels.Where(StatusFunc.Compile())
+                        .Where(SearchFunc.Compile()));
+            }
+            UpdateSelectedItem();
+        }
+
         private void RefreshData(Expression<Func<DeviceRental, bool>> StatusFunc, Expression<Func<DeviceRental, bool>> SearchFunc)
         {
             //ThrobberVisible = Visibility.Visible;
@@ -153,6 +196,22 @@ namespace DeviceRentalManagement.ViewModel
             preserveModels = DeviceRentalModels;
             SelectedItem = preserveItem;
             //ThrobberVisible = Visibility.Collapsed;
+        }
+
+        private void UpdateSelectedItem()
+        {
+            try
+            {
+                SelectedItem = DeviceRentalModels.First(s => s.SId == preserveItem.SId);
+            }
+            catch
+            {
+                if (DeviceRentalModels.Any())
+                {
+                    preserveItem = SelectedItem;
+                    SelectedItem = DeviceRentalModels[0];
+                }
+            }
         }
     }
 }
